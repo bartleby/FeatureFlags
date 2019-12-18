@@ -52,13 +52,22 @@ extension FeatureFlags {
     }
     
     static func loadConfiguration() -> [Feature]? {
-        var remoteData: Data?
-        if let configurationURL = configurationURL {
-            remoteData = try? Data(contentsOf: configurationURL)
-        }
-        return loadConfigurationWithData(remoteData)
+        updateFromRemote()
+        return loadConfigurationWithData(.none)
     }
     
+    static func updateFromRemote() {
+        if let configurationURL = configurationURL {
+            DispatchQueue.global(qos: .background).async {
+                let remoteData = try? Data(contentsOf: configurationURL)
+                DispatchQueue.main.async {
+                    loadConfigurationWithData(remoteData)
+                }
+            }
+        }
+    }
+    
+    @discardableResult
     static func loadConfigurationWithData(_ data: Data?) -> [Feature]? {
         // Load cached configuration, if exists
         let cachedResult = loadCachedConfiguration()
