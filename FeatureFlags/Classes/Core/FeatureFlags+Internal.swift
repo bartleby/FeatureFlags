@@ -61,7 +61,8 @@ extension FeatureFlags {
             DispatchQueue.global(qos: .background).async {
                 let remoteData = try? Data(contentsOf: configurationURL)
                 DispatchQueue.main.async {
-                    loadConfigurationWithData(remoteData)
+                    let configuration = loadConfigurationWithData(remoteData)
+                    self.configuration = configuration
                     completion?()
                 }
             }
