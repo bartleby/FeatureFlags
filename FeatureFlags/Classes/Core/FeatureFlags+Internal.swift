@@ -51,17 +51,18 @@ extension FeatureFlags {
         return nil
     }
     
-    static func loadConfiguration() -> [Feature]? {
-        updateFromRemote()
+    static func loadConfiguration(_ completion:(() -> Void)? = nil) -> [Feature]? {
+        updateFromRemote(completion)
         return loadConfigurationWithData(.none)
     }
     
-    static func updateFromRemote() {
+    static func updateFromRemote(_ completion:(() -> Void)? = nil) {
         if let configurationURL = configurationURL {
             DispatchQueue.global(qos: .background).async {
                 let remoteData = try? Data(contentsOf: configurationURL)
                 DispatchQueue.main.async {
                     loadConfigurationWithData(remoteData)
+                    completion?()
                 }
             }
         }

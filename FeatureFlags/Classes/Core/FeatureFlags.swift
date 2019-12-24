@@ -101,8 +101,7 @@ public struct FeatureFlags {
     
     @discardableResult
     public static func refresh(_ completion:(() -> Void)? = nil) -> [Feature]? {
-        configuration = loadConfiguration()
-        completion?()
+        configuration = loadConfiguration(completion)
         return configuration
     }
 
